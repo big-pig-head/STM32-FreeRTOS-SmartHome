@@ -1,0 +1,48 @@
+# Keil MDK 编译产物
+*.o
+*.d
+*.crf
+*.lst
+*.axf
+*.hex
+*.bin
+*.map
+*.htm
+*.dep
+*.lnp
+*.iex
+*.ini
+*.tra
+*.sct
+
+# Keil 中间目录
+Listings/
+Objects/
+JLinkLog.txt
+JLinkSettings.ini
+
+# Qt 编译产物
+*.pro.user
+*.o
+*.obj
+moc_*
+ui_*
+qrc_*
+Makefile
+*.Debug
+*.Release
+build-*/
+
+# 编辑器/系统
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.uvguix.*
+*.scvd
