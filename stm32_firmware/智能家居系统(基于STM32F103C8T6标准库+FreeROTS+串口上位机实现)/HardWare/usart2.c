@@ -5,7 +5,7 @@
 #include "string.h"
 #include "stm32f10x_dma.h"
 #include "stm32f10x_tim.h"
- 
+//这个是留给esp8266模块使用的，但是现在没使用 
 
 //串口发送缓存区 	
 __align(8) u8 USART2_TX_BUF[USART2_MAX_SEND_LEN]; 	//发送缓冲,最大USART2_MAX_SEND_LEN字节

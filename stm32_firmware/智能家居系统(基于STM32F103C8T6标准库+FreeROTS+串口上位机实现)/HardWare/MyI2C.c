@@ -166,7 +166,7 @@ uint8_t MyI2C_ReciveAck(void)
     Delay_us(5);  
     while(timeout--)       
     {// 等待从设备发送ACK
-        if(MyI2C_R_SDA() == 0)
+        if(MyI2C_R_SDA() == 0)    //从机主动把sda总线拉为0，主动行为，不然空闲的时候总线为1
         {// 读到应答信号
             ack = 1;  
         }
@@ -195,7 +195,7 @@ uint8_t MyI2C_SendByte(uint8_t Byte)
 	uint8_t i;
 	for (i = 0; i < 8; i ++)				//循环8次，主机依次发送数据的每一位
 	{
-		if(0x80 & Byte)
+		if(0x80 & Byte)           //如果最高位就是现在要发的那一位，为1，两个为1，sda才置位1，否则置位0
         {	
 			MyI2C_W_SDA(1);
 		}	
@@ -251,8 +251,8 @@ uint8_t MyI2C_SendBytes(uint8_t addr, uint8_t *buf, uint8_t buf_size)
 {
     uint8_t i;
     uint8_t result = 0;
-	MyI2C_Start();
-    if(MyI2C_SendByte(addr << 1))    // 发送设备地址(7bit地址)
+	MyI2C_Start();   //起始信号
+    if(MyI2C_SendByte(addr << 1))    // 发送设备地址(7bit地址) ，左移一位之后置位0，写
     {// 收到应答，发送成功
         for (i = 0; i < buf_size; i++)  // 发送数据
         {
@@ -276,14 +276,14 @@ uint8_t MyI2C_ReceiveBytes(uint8_t addr, uint8_t *buf, uint8_t buf_size)
     uint8_t i;    
     uint8_t result = 0;
 	MyI2C_Start();
-    if(MyI2C_SendByte((addr << 1) | 1))  // 发送设备地址(7bit地址)
+    if(MyI2C_SendByte((addr << 1) | 1))  // 发送设备地址(7bit地址) ，左移之后末尾是1，读
     {
-        for (i = 0; i < buf_size; i++)    // 连续读取数据
+        for (i = 0; i < buf_size; i++)    // 连续读取数据，buf_size是我们要接收数据的长度
         {
             *buf++ = MyI2C_ReceiveByte(); 
             if (i == buf_size - 1)
             {
-                MyI2C_SendAck(1);        // 最后一个数据需要回NACK
+                MyI2C_SendAck(1);        // 最后一个数据需要回NACK，1表示下一个时序不需要再接收数据，0表示下一个时序继续接收数据。sda为0是主动行为，1为空闲行为
             }
             else
             {        

@@ -41,7 +41,6 @@ StaticTask_t  start_task_tcb;
 
 extern float current_light;
 extern uint8_t MusicState;
-char buf1[100];
 
 int main(void)
 {	                     

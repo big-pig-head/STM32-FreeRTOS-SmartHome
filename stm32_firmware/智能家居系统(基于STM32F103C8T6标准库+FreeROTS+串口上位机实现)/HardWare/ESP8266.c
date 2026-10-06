@@ -5,6 +5,8 @@
 #include "string.h"
 #include "stdio.h"
 
+//这个是留给esp8266模块使用的，但是现在没使用 
+
 /* 引用串口1的接收缓冲区，TCP数据提取后存入此处供命令解析 */
 extern char Serial_RxPacket[];
 extern uint8_t Serial_RxFlag;

@@ -1,18 +1,14 @@
 #ifndef __ESP8266_H
 #define __ESP8266_H
-
+//Õâ¸öÊÇÁô¸øesp8266Ä£¿éÊ¹ÓÃµÄ£¬µ«ÊÇÏÖÔÚÃ»Ê¹ÓÃ 
 void WIFI_GPIO_Init(void);
 void Rst_WIFI(void);
 u8* WIFI_Check_Cmd(u8 *str);
 u8 WIFI_Send_Cmd(u8 *cmd,u8 *ack,u16 time);
 
-/* TCP Serveræ¨¡å¼ï¼šESP8266è‡ªå»ºWiFiçƒ­ç‚¹ï¼Œæ‰‹æœºTCP APPç›´è¿æ§åˆ¶ï¼Œæ— éœ€å¤–éƒ¨æœåŠ¡å™¨ */
+/* TCP ServerÄ£Ê½£ºESP8266×Ô½¨WiFiÈÈµã£¬ÊÖ»úTCP APPÖ±Á¬¿ØÖÆ£¬ÎŞĞèÍâ²¿·şÎñÆ÷ */
 void WIFI_Init_TCP(void);
 u8 WIFI_CheckTCPCommand(void);
 
-/* ä»¥ä¸‹ä¸ºåŸå§‹MQTTæ¨¡å¼å‡½æ•°ï¼ˆå·²åºŸå¼ƒï¼Œä¿ç•™ä¾›å‚è€ƒï¼‰ */
-//void WIFI_Init(void);
-//void ESP8266_Publish(const char *topic,const char *msg);
-//void ESP8266_Subscribe(const char *topic);
 
 #endif

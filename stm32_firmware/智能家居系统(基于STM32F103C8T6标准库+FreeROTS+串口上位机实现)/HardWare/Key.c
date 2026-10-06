@@ -19,6 +19,7 @@
 #include "queue.h"
 #include "event_groups.h"
 #include "OLED.h"
+#include "freertos_task.h"
 
 extern TaskHandle_t LEDON_Task_handler;
 extern TaskHandle_t LEDOFF_Task_handler;
@@ -173,11 +174,11 @@ void EXTI15_10_IRQHandler(void)
 	if(EXTI_GetITStatus(EXTI_Line15)==SET)
 	{
 		Delay_xms(20);                                              //按键消抖
-		if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15) == 0)         //读PC15输入寄存器的状态，如果为0，则代表按键1按下
-		{
-			LED_Turn();
-			printf("KEY1: LED toggled\r\n");
-		}
+if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15) == 0)
+{
+	Key_Event_t ev = KEY_EVENT_LED;
+	xQueueSendFromISR(Key_Queue, &ev, NULL);
+}
 		EXTI_ClearITPendingBit(EXTI_Line15);     //将通道15中断标志位清除
 	}
 }	
@@ -194,24 +195,11 @@ void EXTI1_IRQHandler(void)
 	if(EXTI_GetITStatus(EXTI_Line1)==SET)
 	{
 		Delay_xms(20);                                              //按键消抖
-		if (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) == 0)          //读PB1输入寄存器的状态，如果为0，则代表按键2按下
-		{
-			extern bool MotorState;
-			if(MotorState)
-			{
-				GPIO_SetBits(GPIOA, GPIO_Pin_4);
-				GPIO_SetBits(GPIOA, GPIO_Pin_5);
-				MotorState = false;
-				printf("KEY2: 风扇关闭\r\n");
-			}
-			else
-			{
-				GPIO_SetBits(GPIOA, GPIO_Pin_4);
-				GPIO_ResetBits(GPIOA, GPIO_Pin_5);
-				Motor_SetSpeed(60);
-				printf("KEY2: 风扇开启 Speed=60\r\n");
-			}
-		}
+if (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) == 0)
+{
+	Key_Event_t ev = KEY_EVENT_FAN;
+	xQueueSendFromISR(Key_Queue, &ev, NULL);
+}
 		EXTI_ClearITPendingBit(EXTI_Line1);     //将通道1中断标志位清除
 	}
 }
@@ -227,25 +215,11 @@ void EXTI9_5_IRQHandler(void)
 	if(EXTI_GetITStatus(EXTI_Line7)==SET)
 	{	
 		Delay_xms(20);                                              //按键消抖
-		if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_7) == 0)
-		{	
-			if(MusicState == 0)                                    // 音乐未播放 → 开始播放
-			{
-				MusicState = 1;
-				printf("PA7: 开始播放音乐, MusicState=%d\r\n", MusicState);
-			}
-			else if(MusicState == 1)                               // 音乐播放中 → 停止
-			{
-				TIM_Cmd(TIM2, DISABLE);                          // 立即关闭定时器，停止发声
-				MusicState = 2;                                  // 标记：手动停止（非自然播完）
-				printf("PA7: 停止音乐, MusicState=%d\r\n", MusicState);
-			}
-			else if(MusicState == 2)                               // 音乐已停止 → 继续播放
-			{
-				MusicState = 1;                                  // 恢复播放标志
-				printf("PA7: 恢复播放, MusicState=%d\r\n", MusicState);
-			}
-		}
-		EXTI_ClearITPendingBit(EXTI_Line7);     //将通道7中断标志位清除
+if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_7) == 0)
+{
+	Key_Event_t ev = KEY_EVENT_MUSIC;
+	xQueueSendFromISR(Key_Queue, &ev, NULL);
+}
+		EXTI_ClearITPendingBit(EXTI_Line7);     //将通道7中断标志位清除，不然nvic中断调度器就会一直响应
 	}
 }

@@ -7,11 +7,31 @@
 #include "queue.h"
 #include "event_groups.h"
 #include "semphr.h"
+#include "stdint.h"
 
 void Start_Task(void * pvParameters);
-void Query_task(void *pvParameters);
 
-/* OLEDäº’æ–¥é”ï¼Œä¾›æ‰€æœ‰éœ€è¦å†™OLEDçš„æ¨¡å—ä½¿ç”¨ */
+/* OLED»¥³âËø£¬¹©ËùÓĞĞèÒªĞ´OLEDµÄÄ£¿éÊ¹ÓÃ */
 extern SemaphoreHandle_t OLEDMutex;
+
+/* ===== OLED ³éÀë£ºÏÔÊ¾ÏûÏ¢ =====
+ * ÒµÎñÈÎÎñ(²É¼¯/´®¿Ú/°´¼ü)Ö»°Ñ"ÒªÏÔÊ¾Ê²Ã´"·¢½ø OLED_Queue£¬
+ * ÓÉ×¨ÃÅµÄ Display_task Í³Ò»Ë¢ OLED£¬ÒµÎñÈÎÎñ²»ÔÙÖ±½Ó²Ù×÷ÂıËÙ OLED¡£ */
+typedef struct {
+    uint8_t  cmd;    /* 0=±£Áô 1=ÎÂ¶È 2=Êª¶È 3=¹âÕÕ 4=ÒôÀÖ²¥·Å 5=ÒôÀÖÍ£Ö¹ */
+    float    fval;   /* ÏÔÊ¾ÊıÖµ(ÎÂ¶È/Êª¶È/¹âÕÕ) */
+} OLED_Msg;
+extern QueueHandle_t OLED_Queue;
+
+/* ===== °´¼üÊÂ¼ş»¯£º°´¼üÊÂ¼ş =====
+ * °´¼üÖĞ¶ÏÖ»·¢ÊÂ¼ş½ø Key_Queue£¬Ïû¶¶/È·ÈÏ/ÍâÉè²Ù×÷Í³Ò»·Åµ½ KeyHandle_task£¬
+ * ±ÜÃâÔÚÖĞ¶ÏÀï×öºÄÊ±²Ù×÷¡£ */
+typedef enum {
+    KEY_EVENT_NONE = 0,
+    KEY_EVENT_LED,    /* °´¼ü1£ºLED */
+    KEY_EVENT_FAN,    /* °´¼ü2£º·çÉÈ */
+    KEY_EVENT_MUSIC   /* °´¼ü3£ºÒôÀÖ */
+} Key_Event_t;
+extern QueueHandle_t Key_Queue;
 
 #endif
